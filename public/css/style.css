@@ -1,0 +1,48 @@
+html {
+    font-size: 16px;
+}
+body, body > * {
+    --defaultFont: "Nunito";
+    /* --defaultFont: "Poppins"; */
+    font-family: var(--defaultFont) !important;
+    /* font-family: Helvetica, sans-serif; */
+    box-sizing: border-box;
+}
+
+.row {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.btn-default, .btn-default:visited {
+    color: #eeeeee;
+    background-color: #1890ff;
+    border: 1px solid #1890ff66;
+    box-shadow: none;
+}
+.btn-default:hover, .btn-default:focus {
+    color: #eeeeee;
+    background-color: #1890ff66;
+    border: 1px solid #1890ff66;
+    box-shadow: none;
+}
+
+.btn-border, .btn-border:visited {
+    color: #eeeeee;
+    background-color: #3e4956;
+    border: 1px solid #3e4956;
+    box-shadow: none;
+}
+.btn-border:hover, .btn-border:focus {
+    background-color: #3e495655;
+    color: #eeeeee;
+    border: 1px solid #3e4956;
+    box-shadow: none;
+}
+
+.font13em{
+    font-size: 1.3rem;
+}
+.font15em{
+    font-size: 1.5rem;
+}
