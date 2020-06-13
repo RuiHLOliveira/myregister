@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Situation;
+use App\BackupManager;
 
 class SituationsController extends Controller
 {
@@ -13,7 +15,11 @@ class SituationsController extends Controller
      */
     public function index()
     {
-        //
+        $user_id = request()->user()->id;
+        $situations = Situation::where('user_id',$user_id)->get();
+        return view('situations.index', [
+            'situations' => $situations
+        ]);
     }
 
     /**
@@ -23,7 +29,8 @@ class SituationsController extends Controller
      */
     public function create()
     {
-        //
+        return view('situations.create', [
+        ]);
     }
 
     /**
@@ -34,7 +41,15 @@ class SituationsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user_id = request()->user()->id;
+        $data = $request->all();
+        $situation = new Situation();
+        $situation->situation = $data['situation'];
+        $situation->user_id = $user_id;
+        $situation->save();
+
+        BackupManager::dumpDatabase('myregister');
+        return redirect()->route('situations.index');
     }
 
     /**
@@ -79,6 +94,11 @@ class SituationsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user_id = request()->user()->id;
+        $situation = Situation::where('user_id', $user_id)->where('id',$id)->first();
+        Situation::destroy($situation->id);
+
+        BackupManager::dumpDatabase('myregister');
+        return redirect()->route('situations.index');
     }
 }

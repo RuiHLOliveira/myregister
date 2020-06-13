@@ -10,16 +10,16 @@
         <div class="row">
             <div class="col">
                 <label for="name">Name</label>
-                <input class="form-control" type="text" name="name">
+                <input class="form-control" type="text" name="name" required>
             </div>
         </div>
 
-        <div class="row">
+        {{-- <div class="row">
             <div class="col">
                 <label for="description">Description</label>
                 <textarea rows="5" class="form-control" type="text" name="description"></textarea>
             </div>
-        </div>
+        </div> --}}
         
         <div class="row">
             <div class="col">

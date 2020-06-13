@@ -14,7 +14,7 @@
             </div>
         </div>
 
-        {{-- <div class="row">
+        <div class="row">
             <div class="col">
                 <label for="situation">
                     Choose a Situation
@@ -36,13 +36,6 @@
                 </label>
                 <input id="situationInput" class="form-control" type="text" name="situationInput">
             </div>
-        </div> --}}
-
-        <div class="row">
-            <div class="col">
-                <label for="duedate">Due Date</label>
-                <input class="form-control" type="date" name="duedate" value="{{ $task->getDate() }}">
-            </div>
         </div>
 
         <div class="row">
@@ -51,30 +44,13 @@
                 <textarea rows="5" class="form-control" type="text" name="description">{{ $task->description }}</textarea>
             </div>
         </div>
-
+        
         <div class="row">
             <div class="col">
                 <a class="btn btn-danger" href="{{ route('tasks.index')}}">back</a>
-                <button class="btn btn-success" type="submit">Just Save</button>
+                <button class="btn btn-success" type="submit">Save</button>
             </div>
         </div>
-
-        <div class="row">
-            <div class="col">
-            <label for="targetSituation">Or Send To</label><br>
-            <input type='hidden' name='targetSituation' id='targetSituation'>
-            
-            <button class="btn btn-default" type="submit" onclick="setTargetSituation('1')" >Tickler</button>
-            <button class="btn btn-default" type="submit" onclick="setTargetSituation('2')" >Waiting For</button>
-            <button class="btn btn-default" type="submit" onclick="setTargetSituation('3')" >Recurring</button>
-            <button class="btn btn-default" type="submit" onclick="setTargetSituation('4')" >Next</button>
-            <button class="btn btn-default" type="submit" onclick="setTargetSituation('5')" >Read List</button>
-            <button class="btn btn-default" type="submit" onclick="setTargetSituation('6')" >Someday/Maybe</button>
-
-            </div>
-        </div>
-        
-        
 
     </form>
 </div>

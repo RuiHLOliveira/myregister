@@ -70,10 +70,33 @@
                 </li>
 
                 <li>
-                    <a class="" href="{{ route('tasks.index') }}">Tasks</a>
+                    <a class="" href="{{ route('tasks.index') }}">Inbox</a>
                 </li>
                 <li>
+                    <a class="" href="{{ route('tasks.tickler') }}">Tickler</a>
+                </li>
+                <li>
+                    <a class="" href="{{ route('tasks.waitingfor') }}">Waiting For</a>
+                </li>
+                <li>
+                    <a class="" href="{{ route('tasks.recurring') }}">Recurring</a>
+                </li>
+                <li>
+                    <a class="" href="{{ route('tasks.next') }}">Next</a>
+                </li>
+                <li>
+                    <a class="" href="{{ route('tasks.readlist') }}">Reading List</a>
+                </li>
+
+                <li>
                     <a class="" href="{{ route('projects.index') }}">Projects</a>
+                </li>
+                <li>
+                    <a class="" href="{{ route('situations.index') }}">Situations</a>
+                </li>
+
+                <li>
+                    <a class="" href="{{ route('tasks.somedaymaybe') }}">Someday / Maybe</a>
                 </li>
                 
             @endguest
@@ -104,6 +127,8 @@
             @yield('title')
             @yield('titleButtons')
         </h1>
+        <h5><small class="text-muted">@yield('subtitle')</small></h5>
+        <hr>
         @yield('content')
     </main>
 </div>

@@ -18,8 +18,10 @@ class TasksController extends Controller
     public function index($situation = null)
     {
         $user_id = request()->user()->id;
-        $tasks = Task::where('user_id',$user_id)->get();
+        $tasks = Task::where('user_id',$user_id)->whereNull('situation_id')->get();
         return view('task.index', [
+            'title' => 'Inbox',
+            'subtitle' => "put your stuff here",
             'tasks' => $tasks
         ]);
     }
@@ -55,7 +57,7 @@ class TasksController extends Controller
         $data = $request->all();
         $task = new Task();
         $task->name = $data['name'];
-        $task->description = $data['description'];
+        // $task->description = $data['description'];
         $task->user_id = $request->user()->id;
         $task->save();
 
@@ -112,16 +114,22 @@ class TasksController extends Controller
         $data = $request->all();
         $task = Task::where('user_id', $user_id)->where('id', $id)->first();
 
-        if(isset($data['situationInput'])){
-            $situation = new Situation();
-            $situation->situation = $data['situationInput'];
-            $situation->user_id = $user_id;
-            $situation->save();
-            $task->situation_id = $situation->id;
-        } elseif(isset($data['situationSelect'])) {
-            $task->situation_id = $data['situationSelect'];
+        // if(isset($data['situationInput'])){
+        //     $situation = new Situation();
+        //     $situation->situation = $data['situationInput'];
+        //     $situation->user_id = $user_id;
+        //     $situation->save();
+        //     $task->situation_id = $situation->id;
+        // } elseif(isset($data['situationSelect'])) {
+        //     $task->situation_id = $data['situationSelect'];
+        // }
+
+        if(isset($data['targetSituation'])) {
+            $task->situation_id = $data['targetSituation'];
         }
-        
+        if(isset($data['duedate'])) {
+            $task->duedate = $data['duedate'];
+        }
         $task->name = $data['name'];
         $task->description = $data['description'];
         $teste = $task->save();
@@ -143,6 +151,127 @@ class TasksController extends Controller
         Task::destroy($task->id);
 
         BackupManager::dumpDatabase('myregister');
-        return redirect()->route('tasks.index');
+        return redirect()->back();
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function tickler()
+    {
+        $user_id = request()->user()->id;
+        $tasks = Task::where([
+            'user_id' => $user_id,
+            'situation_id' => 1
+        ])->get();
+
+        // foreach ($tasks as $key => $task) {
+        //     $data = $task->duedate;
+        //     $dateObject = \DateTime::createFromFormat('Y-m-d H:i:s',$data);
+        //     $tasks[$key]->duedateObj = $dateObject;
+        //     $tasks[$key]->duedateReadable = $dateObject->format('D, d M Y H:i:s');
+        // }
+        return view('task.index', [
+            'title' => 'Tickler',
+            'subtitle' => "stuff you need to remember today",
+            'tasks' => $tasks
+        ]);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function waitingfor($situation = null)
+    {
+        $user_id = request()->user()->id;
+        $tasks = Task::where([
+            'user_id' => $user_id,
+            'situation_id' => 2
+        ])->orderBy('duedate','asc')->get();
+        return view('task.index', [
+            'title' => 'Waiting For',
+            'subtitle' => "waiting someone's callback",
+            'tasks' => $tasks
+        ]);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function recurring($situation = null)
+    {
+        $user_id = request()->user()->id;
+        $tasks = Task::where([
+            'user_id' => $user_id,
+            'situation_id' => 3
+        ])->get();
+        return view('task.index', [
+            'title' => 'Recurring',
+            'subtitle' => "tasks you do everyday",
+            'tasks' => $tasks
+        ]);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function next($situation = null)
+    {
+        $user_id = request()->user()->id;
+        $tasks = Task::where([
+            'user_id' => $user_id,
+            'situation_id' => 4
+        ])->get();
+        return view('task.index', [
+            'title' => 'Next',
+            'subtitle' => "next actions you need to do",
+            'tasks' => $tasks
+        ]);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function readlist($situation = null)
+    {
+        $user_id = request()->user()->id;
+        $tasks = Task::where([
+            'user_id' => $user_id,
+            'situation_id' => 5
+        ])->get();
+        return view('task.index', [
+            'title' => 'Reading List',
+            'subtitle' => "articles, videos and stuff you want to read/watch",
+            'tasks' => $tasks
+        ]);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function somedaymaybe($situation = null)
+    {
+        $user_id = request()->user()->id;
+        $tasks = Task::where([
+            'user_id' => $user_id,
+            'situation_id' => 6
+        ])->get();
+        return view('task.index', [
+            'title' => 'Someday/Maybe',
+            'subtitle' => "things you want to do someday, but not week... or this month... or this year",
+            'tasks' => $tasks
+        ]);
     }
 }
