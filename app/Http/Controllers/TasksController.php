@@ -49,12 +49,13 @@ class TasksController extends Controller
     public function store(Request $request)
     {
         /**
-         * 1 - mapeamento situation numero string
-         * 2 - segurança do form
-         * 4 - mostrar usuario eloquent
          * @todo validate these inputs
          */
+
         $data = $request->all();
+        if(!isset($data['name']) || $data['name'] == ''){
+            return redirect()->back()->withError('Name is needed');
+        }
         $task = new Task();
         $task->name = $data['name'];
         // $task->description = $data['description'];
@@ -110,8 +111,12 @@ class TasksController extends Controller
         /**
          * @todo validate these inputs
          */
-        $user_id = request()->user()->id;
         $data = $request->all();
+        if(!isset($data['name']) || $data['name'] == ''){
+            return redirect()->back()->withError('Name is needed');
+        }
+        
+        $user_id = request()->user()->id;
         $task = Task::where('user_id', $user_id)->where('id', $id)->first();
 
         // if(isset($data['situationInput'])){

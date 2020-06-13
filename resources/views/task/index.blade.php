@@ -8,11 +8,9 @@
 
 {{-- DEFINES SUBTITLE --}}
 @section('subtitle', $subtitle)
-
-@if($title === 'Inbox')
-    <a class="btn btn-sm btn-primary" href="{{ route('tasks.create')}}">New</a>
-@endif
-
+    @if($title === 'Inbox')
+        <a class="btn btn-sm btn-primary" href="{{ route('tasks.create')}}">New</a>
+    @endif
 @endsection
 
 {{-- DEFINES PAGE CONTENT --}}
@@ -32,7 +30,7 @@
                 @if ($task->situation != null)
                     <div class="mb-3"><small class="text-muted">{{ $task->situation->situation }}</small></div>
                 @endif
-                
+
                 <div class="mb-3">
                     <a class="btn btn-outline-success btn-sm" href="{{ route('tasks.edit', $task->id) }}">Edit</a>
                     <form class="d-inline" action="{{ route('tasks.destroy', $task->id) }}" method="post">
@@ -41,7 +39,7 @@
                         <button type="submit" class="btn btn-outline-danger btn-sm">Del</a>
                     </form>
                 </div>
-                
+
             </div>
         </div>
     @empty

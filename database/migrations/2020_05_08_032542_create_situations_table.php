@@ -30,7 +30,8 @@ class CreateSituationsTable extends Migration
             ['id' => 3, 'situation' => 'Recurring'],
             ['id' => 4, 'situation' => 'Next'],
             ['id' => 5, 'situation' => 'Read List'],
-            ['id' => 6, 'situation' => 'Someday/Maybe']
+            ['id' => 6, 'situation' => 'Someday/Maybe'],
+            ['id' => 7, 'situation' => 'Project']
         ]);
     }
 

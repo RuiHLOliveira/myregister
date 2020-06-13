@@ -10,7 +10,7 @@
         <div class="row">
             <div class="col">
                 <label for="name">Name</label>
-                <input class="form-control" type="text" name="name" value="{{ $task->name }}">
+                <input class="form-control" type="text" name="name" value="{{ $task->name }}" required>
             </div>
         </div>
 
@@ -73,8 +73,22 @@
 
             </div>
         </div>
-        
-        
+
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-success" type="submit" onclick="setTargetSituation('7')" >Project</button>
+            </div>
+        </div>
+
+        @if (session('error'))
+            <div class="row">
+                <div class="col">
+                    <div class="alert alert-danger">
+                        {{session('error')}}
+                    </div>
+                </div>
+            </div>
+        @endif
 
     </form>
 </div>

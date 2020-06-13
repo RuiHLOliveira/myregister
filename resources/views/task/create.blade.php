@@ -20,13 +20,24 @@
                 <textarea rows="5" class="form-control" type="text" name="description"></textarea>
             </div>
         </div> --}}
-        
+
         <div class="row">
             <div class="col">
                 <a class="btn btn-danger" href="{{ route('tasks.index') }}">back</a>
                 <button class="btn btn-success" type="submit">Add</button>
             </div>
         </div>
+
+        @if (session('error'))
+            <div class="row">
+                <div class="col">
+                    <div class="alert alert-danger">
+                        {{session('error')}}
+                    </div>
+                </div>
+            </div>
+        @endif
+
     </form>
 </div>
 @endsection
