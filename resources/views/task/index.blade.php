@@ -15,12 +15,36 @@
 
 {{-- DEFINES PAGE CONTENT --}}
 @section('content')
+    
+    @if (session('error'))
+        <div class="row">
+            <div class="col">
+                <div class="alert alert-danger">
+                    {{session('error')}}
+                </div>
+            </div>
+        </div>
+    @endif
+
     @forelse ($tasks as $task)
         <div class="row" style="margin-bottom: 20px;">
             <div class="col">
+                <div class="font15em font-weight-light">
+                    {{ $task->name }}
+                </div>
+
+                @if($task->completed)
+                    <div>
+                        <span class="badge badge-success">Task Completed!</span>
+                    </div>
+                @endif
                 
-                <div class="mb-3 font15em font-weight-light">{{ $task->name }}</div> {{-- {{ $task->id }} -  --}}
-                
+                @if ($task->project_id != null)
+                    <div>
+                        <span class="taskProjectFont">Project: {{ $task->project->name }}</span>
+                    </div>
+                @endif
+
                 @if ($task->situation_id == 1)
                     <div class="mb-3">Due in: {{ $task->getReadableDate() }}</div>
                 @endif

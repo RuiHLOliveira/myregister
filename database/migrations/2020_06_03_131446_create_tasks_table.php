@@ -19,10 +19,17 @@ class CreateTasksTable extends Migration
 
             $table->longText('name');
             $table->longText('description')->nullable();
-            $table->integer('status')->unsigned()->default('0');
+            $table->dateTime('duedate', 0)->nullable();
+            $table->boolean('completed')->default(false);
+            $table->unsignedBigInteger('situation_id')->nullable();
+            $table->unsignedBigInteger('checklist_id')->nullable();
+            $table->unsignedBigInteger('project_id', 0)->nullable();
 
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('situation_id')->references('id')->on('situations');
+            $table->foreign('project_id')->references('id')->on('projects');
+            $table->foreign('checklist_id')->references('id')->on('checklists');
         });
     }
 

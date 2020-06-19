@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\BackupManager;
 use App\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ProjectsController extends Controller
 {
@@ -15,11 +17,21 @@ class ProjectsController extends Controller
      */
     public function index()
     {
-        $user_id = request()->user()->id;
-        $projects = Project::where('user_id', $user_id)->get();
-        return view('project.index',[
-            'projects' => $projects
-        ]);
+        try {
+            $user_id = request()->user()->id;
+            $projects = Project::where([
+                'user_id' => $user_id
+            ])->get();
+            return view('projects.index', [
+                'title' => 'Projects',
+                'subtitle' => "little or big objectives you want to achieve",
+                'projects' => $projects
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error','There was an error while getting your projects.');
+        }
+        
     }
 
     /**
@@ -40,17 +52,22 @@ class ProjectsController extends Controller
      */
     public function store(Request $request)
     {
-        $user_id = request()->user()->id;
-        $data = request()->all();
+        try {
+            $user_id = request()->user()->id;
+            $data = request()->all();
 
-        $project = new Project();
-        $project->name = $data['name'];
-        $project->description = $data['description'];
-        $project->user_id = $user_id;
+            $project = new Project();
+            $project->name = $data['name'];
+            $project->description = $data['description'];
+            $project->user_id = $user_id;
 
-        $project->save();
-        BackupManager::dumpDatabase('myregister');
-        return redirect()->route('projects.index');
+            $project->save();
+            BackupManager::dumpDatabase('myregister');
+            return redirect()->route('projects.index');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error','There was an error while storing your project.');
+        }
     }
 
     /**
@@ -61,7 +78,21 @@ class ProjectsController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $user_id = request()->user()->id;
+            $project = Project::where([
+                'id' => $id,
+                'user_id' => $user_id
+            ])->first();
+            return view('projects.show',[
+                'title' => 'Projects',
+                'subtitle' => "little or big objectives you want to achieve",
+                'project' => $project
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error','There was an error while getting your project.');
+        }
     }
 
     /**
@@ -72,14 +103,19 @@ class ProjectsController extends Controller
      */
     public function edit($id)
     {
-        $user_id = request()->user()->id;
-        $project = Project::where([
-            'user_id' => $user_id,
-            'id' => $id
-        ])->first();
-        return view('project.edit', [
-            'project' => $project
-        ]);
+        try {
+            $user_id = request()->user()->id;
+            $project = Project::where([
+                'user_id' => $user_id,
+                'id' => $id
+            ])->first();
+            return view('projects.edit', [
+                'project' => $project
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error','There was an error while getting your project.');
+        }
     }
 
     /**
@@ -91,17 +127,22 @@ class ProjectsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user_id = request()->user()->id;
-        $data = request()->all();
-        $project = Project::where([
-            'id' => $id,
-            'user_id' => $user_id
-        ])->first();
-        $project->name = $data['name'];
-        $project->description = $data['description'];
-        $project->save();
-        BackupManager::dumpDatabase('myregister');
-        return redirect()->route('projects.index');
+        try {
+            $user_id = request()->user()->id;
+            $data = request()->all();
+            $project = Project::where([
+                'id' => $id,
+                'user_id' => $user_id
+            ])->first();
+            $project->name = $data['name'];
+            $project->description = $data['description'];
+            $project->save();
+            BackupManager::dumpDatabase('myregister');
+            return redirect()->route('projects.index');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error','There was an error while updating your project.');
+        }
     }
 
     /**
@@ -112,11 +153,37 @@ class ProjectsController extends Controller
      */
     public function destroy($id)
     {
-        $project = Project::where([
-            'user_id' => request()->user()->id,
-            'id' => $id
-        ])->first();
-        Project::destroy($project->id);
-        return redirect()->route('projects.index');
+        try {
+            $project = Project::where([
+                'user_id' => request()->user()->id,
+                'id' => $id
+            ])->first();
+            if($project == null){
+                return redirect()->back()->with('error','Project doesnt exist.');
+            }
+            DB::table('tasks')->where('project_id', '=', $project->id)->delete();
+            Project::destroy($project->id);
+            return redirect()->route('projects.index');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error','There was an error while deleting your project.');
+        }
+    }
+
+    public function completeProject($id)
+    {
+        try {
+            $user_id = request()->user()->id;
+            $project = Project::where([
+                'id' => $id,
+                'user_id' => $user_id
+            ])->first();
+            $project->completed = true;
+            $project->save();
+            return redirect()->back();
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error','There was an error while setting your project as completed.');
+        }
     }
 }

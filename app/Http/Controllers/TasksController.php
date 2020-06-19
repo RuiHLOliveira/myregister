@@ -6,26 +6,12 @@ use App\Situation;
 use App\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use App\BackupManager;
+use App\Project;
 
 class TasksController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index($situation = null)
-    {
-        $user_id = request()->user()->id;
-        $tasks = Task::where('user_id',$user_id)->whereNull('situation_id')->get();
-        return view('task.index', [
-            'title' => 'Inbox',
-            'subtitle' => "put your stuff here",
-            'tasks' => $tasks
-        ]);
-    }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -33,11 +19,16 @@ class TasksController extends Controller
      */
     public function create()
     {
-        $user_id = request()->user()->id;
-        $situations = Situation::where('user_id', $user_id)->get();
-        return view('task.create', [
-            'situations' => $situations
-        ]);
+        try {
+            $user_id = request()->user()->id;
+            $situations = Situation::where('user_id', $user_id)->get();
+            return view('task.create', [
+                'situations' => $situations
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error','There was an error.');
+        }
     }
 
     /**
@@ -48,22 +39,32 @@ class TasksController extends Controller
      */
     public function store(Request $request)
     {
-        /**
-         * @todo validate these inputs
-         */
+        try {
+            //code...
+            $data = $request->all();
+            if(!isset($data['name']) || $data['name'] == ''){
+                return redirect()->back()->withError('Name is needed');
+            }
+            $task = new Task();
+            $task->name = $data['name'];
+            $task->user_id = $request->user()->id;
 
-        $data = $request->all();
-        if(!isset($data['name']) || $data['name'] == ''){
-            return redirect()->back()->withError('Name is needed');
+            if (isset($data['project']) ) {
+                $project = Project::where([
+                    'user_id' => $task->user_id,
+                    'id' => $data['project']
+                ])->first();
+                $task->project_id = $project->id;
+            }
+            $task->save();
+
+            BackupManager::dumpDatabase('myregister');
+            return redirect()->route('tasks.index');
+
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error', 'There was an error while storing your task.');
         }
-        $task = new Task();
-        $task->name = $data['name'];
-        // $task->description = $data['description'];
-        $task->user_id = $request->user()->id;
-        $task->save();
-
-        BackupManager::dumpDatabase('myregister');
-        return redirect()->route('tasks.index');
     }
 
     /**
@@ -74,11 +75,18 @@ class TasksController extends Controller
      */
     public function show($id)
     {
-        $user_id = request()->user()->id;
-        $task = Task::where('user_id', $user_id)->where('id',$id)->first();
-        return view('task.show', [
-            'task' => $task
-        ]);
+        try {
+            $user_id = request()->user()->id;
+            $task = Task::where('user_id', $user_id)->where('id',$id)->first();
+            return view('task.show', [
+                'title' => 'Details',
+                'subtitle' => "about your item",
+                'task' => $task
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error','There was an error in your task.');
+        }
     }
 
     /**
@@ -89,14 +97,27 @@ class TasksController extends Controller
      */
     public function edit($id)
     {
-        
-        $user_id = request()->user()->id;
-        $task = Task::where('user_id', $user_id)->where('id',$id)->first();
-        $situations = Situation::where('user_id', $user_id)->get();
-        return view('task.edit', [
-            'task' => $task,
-            'situations' => $situations
-        ]);
+        try {
+            $user_id = request()->user()->id;
+            $task = Task::where('user_id', $user_id)->where('id',$id)->first();
+            if($task == null){
+                return redirect()->route('tasks.index');
+            }
+            $situations = Situation::where('user_id', $user_id)->get();
+
+            $projects = Project::where([
+                'user_id' => $user_id
+            ])->get();
+            
+            return view('task.edit', [
+                'task' => $task,
+                'situations' => $situations,
+                'projects' => $projects
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error', 'There was an error in your task.');
+        }
     }
 
     /**
@@ -108,39 +129,55 @@ class TasksController extends Controller
      */
     public function update(Request $request, $id)
     {
-        /**
-         * @todo validate these inputs
-         */
-        $data = $request->all();
-        if(!isset($data['name']) || $data['name'] == ''){
-            return redirect()->back()->withError('Name is needed');
-        }
-        
-        $user_id = request()->user()->id;
-        $task = Task::where('user_id', $user_id)->where('id', $id)->first();
+        try {
+            $data = $request->all();
+            if(!isset($data['name']) || $data['name'] == ''){
+                return redirect()->back()->withError('Name is needed');
+            }
+            
+            $user_id = request()->user()->id;
+            $task = Task::where('user_id', $user_id)->where('id', $id)->first();
 
-        // if(isset($data['situationInput'])){
-        //     $situation = new Situation();
-        //     $situation->situation = $data['situationInput'];
-        //     $situation->user_id = $user_id;
-        //     $situation->save();
-        //     $task->situation_id = $situation->id;
-        // } elseif(isset($data['situationSelect'])) {
-        //     $task->situation_id = $data['situationSelect'];
-        // }
+            // if(isset($data['situationInput'])){
+            //     $situation = new Situation();
+            //     $situation->situation = $data['situationInput'];
+            //     $situation->user_id = $user_id;
+            //     $situation->save();
+            //     $task->situation_id = $situation->id;
+            // } elseif(isset($data['situationSelect'])) {
+            //     $task->situation_id = $data['situationSelect'];
+            // }
 
-        if(isset($data['targetSituation'])) {
-            $task->situation_id = $data['targetSituation'];
+            if(isset($data['considerProjectForm']) 
+                && $data['considerProjectForm'] == 1
+                && isset($data['project'])
+                && $data['project'] != ''
+            ) {
+                $project = Project::where([
+                    'user_id' => $user_id,
+                    'id' => $data['project']
+                ])->first();
+                $task->project_id = $project->id;
+            }
+
+            if(isset($data['targetSituation'])) {
+                $task->situation_id = $data['targetSituation'];
+            }
+            if(isset($data['duedate'])) {
+                $task->duedate = $data['duedate'];
+            }
+            $task->name = $data['name'];
+            $task->description = $data['description'];
+            
+            $saveResult = $task->save();
+            
+            BackupManager::dumpDatabase('myregister');
+            return redirect()->route('tasks.index');
+
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());            
+            return redirect()->back()->with('error','There was an error while updating your task.');
         }
-        if(isset($data['duedate'])) {
-            $task->duedate = $data['duedate'];
-        }
-        $task->name = $data['name'];
-        $task->description = $data['description'];
-        $teste = $task->save();
-        
-        BackupManager::dumpDatabase('myregister');
-        return redirect()->route('tasks.index');
     }
 
     /**
@@ -151,132 +188,224 @@ class TasksController extends Controller
      */
     public function destroy($id)
     {
-        $user_id = request()->user()->id;
-        $task = Task::where('user_id', $user_id)->where('id',$id)->first();
-        Task::destroy($task->id);
+        try {
+            $user_id = request()->user()->id;
+            $task = Task::where('user_id', $user_id)->where('id',$id)->first();
+            Task::destroy($task->id);
+            BackupManager::dumpDatabase('myregister');
+            return redirect()->back();
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error','There was an error while deleting your task.');
+        }
+    }
 
-        BackupManager::dumpDatabase('myregister');
-        return redirect()->back();
+
+    /**
+     * Lists all Inbox (situation == null) tasks
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        try {
+            $user_id = request()->user()->id;
+            $tasks = Task::where('user_id',$user_id)->whereNull('situation_id')->get();
+            return view('task.index', [
+                'title' => 'Inbox',
+                'subtitle' => "put your stuff here",
+                'tasks' => $tasks
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error','There was an error while getting your tasks.');
+        }
     }
 
     /**
-     * Display a listing of the resource.
-     *
+     * Lists all Tickler (situation == 1) tasks
+     * 
      * @return \Illuminate\Http\Response
      */
     public function tickler()
     {
-        $user_id = request()->user()->id;
-        $tasks = Task::where([
-            'user_id' => $user_id,
-            'situation_id' => 1
-        ])->get();
+        try {
+            $user_id = request()->user()->id;
+            $tasks = Task::where([
+                'user_id' => $user_id,
+                'situation_id' => 1
+            ])->get();
 
-        // foreach ($tasks as $key => $task) {
-        //     $data = $task->duedate;
-        //     $dateObject = \DateTime::createFromFormat('Y-m-d H:i:s',$data);
-        //     $tasks[$key]->duedateObj = $dateObject;
-        //     $tasks[$key]->duedateReadable = $dateObject->format('D, d M Y H:i:s');
-        // }
-        return view('task.index', [
-            'title' => 'Tickler',
-            'subtitle' => "stuff you need to remember today",
-            'tasks' => $tasks
-        ]);
+            return view('task.index', [
+                'title' => 'Tickler',
+                'subtitle' => "stuff you need to remember today",
+                'tasks' => $tasks
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error','There was an error while getting your tasks.');
+        }
     }
 
     /**
-     * Display a listing of the resource.
+     * Lists all Waiting For (situation == 2) tasks
      *
      * @return \Illuminate\Http\Response
      */
     public function waitingfor($situation = null)
     {
-        $user_id = request()->user()->id;
-        $tasks = Task::where([
-            'user_id' => $user_id,
-            'situation_id' => 2
-        ])->orderBy('duedate','asc')->get();
-        return view('task.index', [
-            'title' => 'Waiting For',
-            'subtitle' => "waiting someone's callback",
-            'tasks' => $tasks
-        ]);
+        try {
+            $user_id = request()->user()->id;
+            $tasks = Task::where([
+                'user_id' => $user_id,
+                'situation_id' => 2
+            ])->orderBy('duedate','asc')->get();
+            return view('task.index', [
+                'title' => 'Waiting For',
+                'subtitle' => "waiting someone's callback",
+                'tasks' => $tasks
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error','There was an error while getting your tasks.');
+        }
     }
 
     /**
-     * Display a listing of the resource.
+     * Lists all Recurring (situation == 3) tasks
      *
      * @return \Illuminate\Http\Response
      */
     public function recurring($situation = null)
     {
-        $user_id = request()->user()->id;
-        $tasks = Task::where([
-            'user_id' => $user_id,
-            'situation_id' => 3
-        ])->get();
-        return view('task.index', [
-            'title' => 'Recurring',
-            'subtitle' => "tasks you do everyday",
-            'tasks' => $tasks
-        ]);
+        try {
+            $user_id = request()->user()->id;
+            $tasks = Task::where([
+                'user_id' => $user_id,
+                'situation_id' => 3
+            ])->get();
+            return view('task.index', [
+                'title' => 'Recurring',
+                'subtitle' => "tasks you do everyday",
+                'tasks' => $tasks
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error','There was an error while getting your tasks.');
+        }
     }
 
     /**
-     * Display a listing of the resource.
+     * Lists all Next (situation == 4) tasks
      *
      * @return \Illuminate\Http\Response
      */
     public function next($situation = null)
     {
-        $user_id = request()->user()->id;
-        $tasks = Task::where([
-            'user_id' => $user_id,
-            'situation_id' => 4
-        ])->get();
-        return view('task.index', [
-            'title' => 'Next',
-            'subtitle' => "next actions you need to do",
-            'tasks' => $tasks
-        ]);
+        try {
+            $user_id = request()->user()->id;
+            $tasks = Task::where([
+                'user_id' => $user_id,
+                'situation_id' => 4
+            ])->get();
+            return view('task.index', [
+                'title' => 'Next',
+                'subtitle' => "next actions you need to do",
+                'tasks' => $tasks
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error','There was an error while getting your tasks.');
+        }
     }
 
     /**
-     * Display a listing of the resource.
+     * Lists all Reading List (situation == 5) tasks
      *
      * @return \Illuminate\Http\Response
      */
     public function readlist($situation = null)
     {
-        $user_id = request()->user()->id;
-        $tasks = Task::where([
-            'user_id' => $user_id,
-            'situation_id' => 5
-        ])->get();
-        return view('task.index', [
-            'title' => 'Reading List',
-            'subtitle' => "articles, videos and stuff you want to read/watch",
-            'tasks' => $tasks
-        ]);
+        try {
+            $user_id = request()->user()->id;
+            $tasks = Task::where([
+                'user_id' => $user_id,
+                'situation_id' => 5
+            ])->get();
+            return view('task.index', [
+                'title' => 'Reading List',
+                'subtitle' => "articles, videos and stuff you want to read/watch",
+                'tasks' => $tasks
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error','There was an error while getting your tasks.');
+        }
     }
 
     /**
-     * Display a listing of the resource.
+     * Lists all Someday/maybe (situation == 6) tasks
      *
      * @return \Illuminate\Http\Response
      */
     public function somedaymaybe($situation = null)
     {
-        $user_id = request()->user()->id;
-        $tasks = Task::where([
-            'user_id' => $user_id,
-            'situation_id' => 6
-        ])->get();
-        return view('task.index', [
-            'title' => 'Someday/Maybe',
-            'subtitle' => "things you want to do someday, but not week... or this month... or this year",
-            'tasks' => $tasks
-        ]);
+        try {
+            $user_id = request()->user()->id;
+            $tasks = Task::where([
+                'user_id' => $user_id,
+                'situation_id' => 6
+            ])->get();
+            return view('task.index', [
+                'title' => 'Someday/Maybe',
+                'subtitle' => "things you want to do someday, but not week... or this month... or this year",
+                'tasks' => $tasks
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error','There was an error while getting your tasks.');
+        }
+    }
+    
+    public function taskToProject($id){
+        try {
+            $user_id = request()->user()->id;
+            $task = Task::where([
+                'id' => $id,
+                'user_id' => $user_id
+            ])->first();
+            if($task == null){
+                return redirect()->back();
+            }
+            $project = new Project();
+            $project->name = $task->name;
+            $project->description = $task->description;
+            $project->duedate = $task->duedate;
+            $project->user_id = $user_id;
+            $project->save();
+            $task->delete();
+            return redirect()->back();
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error','There was an error while converting this task to project.');
+        }
+    }
+
+    public function completeTask($id) {
+        try {
+            $user_id = request()->user()->id;
+            $task = Task::where([
+                'id' => $id,
+                'user_id' => $user_id
+            ])->first();
+            if($task == null){
+                return redirect()->back()->with('error','This task doesnt exist.');
+            }
+            $task->completed = true;
+            $task->save();
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error','There was an error while trying to complete this task.');
+        }
     }
 }

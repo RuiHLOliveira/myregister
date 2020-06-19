@@ -16,6 +16,10 @@ class Task extends Model
         return $this->belongsTo('App\Situation');
     }
 
+    public function project() {
+        return $this->belongsTo('App\Project', 'project_id');
+    }
+
 
     public function getReadableDate(){
         if(is_null($this->duedate)) return null;

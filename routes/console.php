@@ -25,7 +25,7 @@ Artisan::command('backup {database}', function(){
     $this->info($date);
     $path = base_path()."/dump_".$database."_".$date.".sql";
     $this->info($path);
-    return shell_exec("mysqldump --user=root --password=rooting --lock-tables --databases $database > $path");
+    return shell_exec("mysqldump --user=root --password=123456 --lock-tables --databases $database > $path");
 });
 
 Artisan::command('describe {table}',function(){
