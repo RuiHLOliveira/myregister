@@ -64,15 +64,16 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row mt-5">
             <div class="col">
                 <a class="mb-3 btn btn-danger btn-responsive" href="{{ route('tasks.index')}}">back</a>
                 <button class="mb-3 btn btn-success btn-responsive" onclick="onSubmitLogic()" type="submit">Just Save</button>
-            </div>
+            {{-- </div>
         </div>
 
         <div class="row">
-            <div class="col">
+            <div class="col"> --}}
+            <br>
             <label for="targetSituation">Or Send To</label><br>
             <input type='hidden' name='targetSituation' id='targetSituation'>
                 <button class="mb-3 btn btn-info btn-responsive" type="submit" onclick="setTargetSituation('1')" >Tickler</button>
@@ -85,7 +86,7 @@
         </div>
     </form>
 
-    <div class="row">
+    <div class="row  mt-5">
         <div class="col">
             <form action="{{ route('tasks.taskToProject', $task->id) }}" method="POST">
                 @csrf
