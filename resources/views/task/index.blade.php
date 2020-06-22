@@ -49,7 +49,7 @@
                     <div class="mb-3">Due in: {{ $task->getReadableDate() }}</div>
                 @endif
                 
-                <div class="mb-3 font-italic">{{ $task->description }}</div>
+                <div class="mb-3 font-italic whiteSpacePreWrap boxBorderLeft">{{ $task->description }}</div>
 
                 @if ($task->situation != null)
                     <div class="mb-3"><small class="text-muted">{{ $task->situation->situation }}</small></div>

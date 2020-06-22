@@ -1,12 +1,21 @@
-html {
-    font-size: 16px;
-}
-body, body > * {
+:root{
     --defaultFont: "Nunito";
     /* --defaultFont: "Poppins"; */
+    --blue: #1890ff;
+    --darkerBlue: #1890ff66;
+    --gray: #3e4956;
+    --darkerGray: #3e495655;
+}
+
+*{
+    box-sizing: border-box;
+}
+
+html, body {
+    font-size: 16px;
+    box-sizing: border-box;
     font-family: var(--defaultFont) !important;
     /* font-family: Helvetica, sans-serif; */
-    box-sizing: border-box;
 }
 
 .row {
@@ -16,27 +25,27 @@ body, body > * {
 
 .btn-default, .btn-default:visited {
     color: #eeeeee;
-    background-color: #1890ff;
-    border: 1px solid #1890ff66;
+    background-color: var(--blue);
+    border: 1px solid var(--darkerBlue);
     box-shadow: none;
 }
 .btn-default:hover, .btn-default:focus {
     color: #eeeeee;
-    background-color: #1890ff66;
-    border: 1px solid #1890ff66;
+    background-color: var(--darkerBlue);
+    border: 1px solid var(--darkerBlue);
     box-shadow: none;
 }
 
 .btn-border, .btn-border:visited {
     color: #eeeeee;
-    background-color: #3e4956;
-    border: 1px solid #3e4956;
+    background-color: var(--gray);
+    border: 1px solid var(--gray);
     box-shadow: none;
 }
 .btn-border:hover, .btn-border:focus {
-    background-color: #3e495655;
+    background-color: var(--darkerGray);
     color: #eeeeee;
-    border: 1px solid #3e4956;
+    border: 1px solid var(--gray);
     box-shadow: none;
 }
 
@@ -71,6 +80,16 @@ body, body > * {
     font-size: 1.2em;
     /* font-style: italic; */
     font-weight: 200;
+}
+
+.whiteSpacePreWrap{
+    white-space: pre-wrap;
+}
+
+.boxBorderLeft{
+    border-left: 5px solid #00000088;
+    padding-left: 10px;
+    margin-left: 10px;
 }
 
 @media (max-width: 767.98px) {
