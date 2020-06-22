@@ -26,7 +26,7 @@
         <div class="row">
             <div class="col">
                 <label for="duedate">Due Date</label>
-                <input class="form-control" type="date" name="duedate" value="{{ $task->getDate() }}">
+                <input class="form-control" type="date" id="duedate" name="duedate" value="{{ $task->getDate() }}">
             </div>
         </div>
 
@@ -76,12 +76,12 @@
             <br>
             <label for="targetSituation">Or Send To</label><br>
             <input type='hidden' name='targetSituation' id='targetSituation'>
-                <button class="mb-3 btn btn-info btn-responsive" type="submit" onclick="setTargetSituation('1')" >Tickler</button>
-                <button class="mb-3 btn btn-info btn-responsive" type="submit" onclick="setTargetSituation('2')" >Waiting For</button>
-                <button class="mb-3 btn btn-info btn-responsive" type="submit" onclick="setTargetSituation('3')" >Recurring</button>
-                <button class="mb-3 btn btn-info btn-responsive" type="submit" onclick="setTargetSituation('4')" >Next</button>
-                <button class="mb-3 btn btn-info btn-responsive" type="submit" onclick="setTargetSituation('5')" >Read List</button>
-                <button class="mb-3 btn btn-info btn-responsive" type="submit" onclick="setTargetSituation('6')" >Someday/Maybe</button>
+                <button class="mb-3 btn btn-info btn-responsive" type="submit" onclick="setTargetSituation(event,'1')" >Tickler</button>
+                <button class="mb-3 btn btn-info btn-responsive" type="submit" onclick="setTargetSituation(event,'2')" >Waiting For</button>
+                <button class="mb-3 btn btn-info btn-responsive" type="submit" onclick="setTargetSituation(event,'3')" >Recurring</button>
+                <button class="mb-3 btn btn-info btn-responsive" type="submit" onclick="setTargetSituation(event,'4')" >Next</button>
+                <button class="mb-3 btn btn-info btn-responsive" type="submit" onclick="setTargetSituation(event,'5')" >Read List</button>
+                <button class="mb-3 btn btn-info btn-responsive" type="submit" onclick="setTargetSituation(event,'6')" >Someday/Maybe</button>
             </div>
         </div>
     </form>
