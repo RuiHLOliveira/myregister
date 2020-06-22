@@ -18,6 +18,11 @@ html, body {
     /* font-family: Helvetica, sans-serif; */
 }
 
+label {
+    padding: 0;
+    margin: 0;
+}
+
 .row {
     padding-top: 10px;
     padding-bottom: 10px;
@@ -86,10 +91,9 @@ html, body {
     white-space: pre-wrap;
 }
 
-.boxBorderLeft{
-    border-left: 5px solid #00000088;
-    padding-left: 10px;
-    margin-left: 10px;
+.cardModel{
+    background-color: #7eabd422;
+    padding: 10px 20px;
 }
 
 @media (max-width: 767.98px) {
