@@ -29,18 +29,28 @@
     @forelse ($projects as $project)
         <div class="row" style="margin-bottom: 20px;">
             <div class="col">
+                <div class="cardModel">
                 
-                <div class="mb-3 font-italic">{{ $project->name }}</div>
+                    <label for="" class="taskProjectFont">Project</label>
+                    <div class="mb-3 font-italic">{{ $project->name }}</div>
 
-                <div class="mb-3">
-                    <a class="btn btn-outline-success btn-sm" href="{{ route('projects.edit', $project->id) }}">Edit</a>
-                    <form class="d-inline" action="{{ route('projects.destroy', $project->id) }}" method="post">
-                        @method('delete')
-                        @csrf
-                        <button type="submit" class="btn btn-outline-danger btn-sm">Del</a>
-                    </form>
+                    <div class="mb-3 font-italic">
+                        <label for="" class="taskProjectFont">Tasks</label>
+                        @foreach ( $project->tasks as $task)
+                            <div class="ml-3">{{$task->name}}</div>
+                        @endforeach
+                    </div>
+
+                    <div class="mb-3">
+                        <a class="btn btn-outline-success btn-sm" href="{{ route('projects.edit', $project->id) }}">Edit</a>
+                        <form class="d-inline" action="{{ route('projects.destroy', $project->id) }}" method="post">
+                            @method('delete')
+                            @csrf
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Del</a>
+                        </form>
+                    </div>
+
                 </div>
-
             </div>
         </div>
     @empty
