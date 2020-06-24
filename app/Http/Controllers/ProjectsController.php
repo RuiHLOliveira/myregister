@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\BackupManager;
 use App\Project;
+use App\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -22,6 +23,12 @@ class ProjectsController extends Controller
             $projects = Project::where([
                 'user_id' => $user_id
             ])->get();
+            foreach ($projects as $key => $project) {
+                $projects[$key]['tasks'] = Task::where([
+                    'user_id' => $user_id,
+                    'project_id' => $project->id
+                ])->get();
+            }
             return view('projects.index', [
                 'title' => 'Projects',
                 'subtitle' => "little or big objectives you want to achieve",
