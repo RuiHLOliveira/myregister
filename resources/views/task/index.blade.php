@@ -29,41 +29,44 @@
     @forelse ($tasks as $task)
         <div class="row" style="margin-bottom: 20px;">
             <div class="col">
-                <div class="font15em font-weight-light">
-                    {{ $task->name }}
-                </div>
-
-                @if($task->completed)
-                    <div>
-                        <span class="badge badge-success">Task Completed!</span>
+                <div class="cardModel">
+                    {{-- TASK NAME --}}
+                    <div class="font15em font-weight-light">
+                        {{ $task->name }}
                     </div>
-                @endif
-                
-                @if ($task->project_id != null)
+
+                    {{-- BADGES COMPLETED AND DUE DATE --}}
                     <div>
-                        <span class="taskProjectFont">Project: {{ $task->project->name }}</span>
+                        @if ($task->situation != null)
+                            <span class="badge badge-info">{{ $task->situation->situation }}</span>
+                        @endif
+                        @if ($task->situation_id == 1)
+                            <span class="badge badge-primary">Due in: {{ $task->getReadableDate() }}</span>
+                        @endif
+                        @if($task->completed)
+                            <span class="badge badge-success">Task Completed!</span>
+                        @endif
                     </div>
-                @endif
 
-                @if ($task->situation_id == 1)
-                    <div class="mb-3">Due in: {{ $task->getReadableDate() }}</div>
-                @endif
-                
-                <div class="mb-3 font-italic">{{ $task->description }}</div>
+                    {{-- PROJECT --}}
+                    @if ($task->project_id != null)
+                        <label for="" class="taskProjectFont">Project</label>
+                        <div class="">{{ $task->project->name }}</div>
+                    @endif
 
-                @if ($task->situation != null)
-                    <div class="mb-3"><small class="text-muted">{{ $task->situation->situation }}</small></div>
-                @endif
+                    {{-- DESCRIPTION --}}
+                    <label for="" class="taskProjectFont">Description</label>
+                    <div class="mb-3 font-italic whiteSpacePreWrap">{{ $task->description }}</div>
 
-                <div class="mb-3">
-                    <a class="btn btn-outline-success btn-sm" href="{{ route('tasks.edit', $task->id) }}">Edit</a>
-                    <form class="d-inline" action="{{ route('tasks.destroy', $task->id) }}" method="post">
-                        @method('delete')
-                        @csrf
-                        <button type="submit" class="btn btn-outline-danger btn-sm">Del</a>
-                    </form>
+                    <div>
+                        <a class="btn btn-outline-success btn-sm" href="{{ route('tasks.edit', $task->id) }}">Edit</a>
+                        <form class="d-inline" action="{{ route('tasks.destroy', $task->id) }}" method="post">
+                            @method('delete')
+                            @csrf
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Del</a>
+                        </form>
+                    </div>
                 </div>
-
             </div>
         </div>
     @empty

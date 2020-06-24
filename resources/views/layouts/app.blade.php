@@ -23,8 +23,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,400;0,700;1,200;1,400&display=swap" rel="stylesheet"> 
     <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
 
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/sidenavbar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <script src="{{ asset('js/myscript.js') }}"></script>
 </head>
 <body>

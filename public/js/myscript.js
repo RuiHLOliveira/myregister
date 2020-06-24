@@ -3,7 +3,12 @@ const toggleMenu = () => {
 }
 
 
-const setTargetSituation = (targetSituationId) => {
+const setTargetSituation = (event, targetSituationId) => {
+    let duedate = document.getElementById('duedate');
+    if(targetSituationId == 1 && duedate.value === '') {
+        alert('To send a task to the tickler, you have to fill the due date field!');
+        event.preventDefault();
+    }
     $targetSituationElement = document.getElementById('targetSituation');
     $targetSituationElement.value = targetSituationId;
     console.log([$targetSituationElement.value]);

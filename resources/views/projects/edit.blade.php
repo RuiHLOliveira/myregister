@@ -36,14 +36,7 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col">
-                <button class="btn btn-primary" onclick="showViewInsertTask()" type="button">Add a Task</button>
-                @if(!$project->completed)
-                    <a href="{{ route('projects.completeProject', $project->id) }}" class="btn btn-success">Mark as completed</a>
-                @endif
-            </div>
-        </div>
+        
 
         <div class="row">
             <div class="col">
@@ -56,23 +49,39 @@
 
     <div class="row">
         <div class="col">
+            @if(!$project->completed)
+                <a href="{{ route('projects.completeProject', $project->id) }}" class="btn btn-success">Mark as completed</a>
+            @endif
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-primary" onclick="showViewInsertTask()" type="button">Add a Task</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
             <form id="insertTaskForm" class="form-group hidden" action="{{route('tasks.store')}}" method="POST">
                 @csrf
 
-                <div class="row">
-                    <div class="col">
-                        <label for="name">Name</label>
-                        <input class="form-control" type="hidden" name="project" value="{{$project->id}}" required>
-                        <input class="form-control" type="text" name="name" required>
+                <div class="grayBox">
+                    <div class="row">
+                        <div class="col">
+                            <label for="name">Name</label>
+                            <input class="form-control" type="hidden" name="project" value="{{$project->id}}" required>
+                            <input class="form-control" type="text" name="name" required>
+                        </div>
                     </div>
-                </div>
 
-                <div class="row">
-                    <div class="col">
-                        <button class="btn btn-success" type="submit">Add</button>
+                    <div class="row">
+                        <div class="col">
+                            <button class="btn btn-success" type="submit">Add</button>
+                        </div>
                     </div>
-                </div>
 
+                </div>
             </form>
         </div>
     </div>

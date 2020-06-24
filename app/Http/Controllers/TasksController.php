@@ -403,6 +403,7 @@ class TasksController extends Controller
             }
             $task->completed = true;
             $task->save();
+            return redirect()->route('tasks.index');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return redirect()->back()->with('error','There was an error while trying to complete this task.');
