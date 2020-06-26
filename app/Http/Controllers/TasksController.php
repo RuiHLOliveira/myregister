@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\NoResultException;
 use App\Situation;
 use App\Task;
 use Illuminate\Http\Request;
@@ -54,6 +55,9 @@ class TasksController extends Controller
                     'user_id' => $task->user_id,
                     'id' => $data['project']
                 ])->first();
+                if($project == null){
+                    throw new NoResultException("Project not found", 1);
+                }
                 $task->project_id = $project->id;
             }
             $task->save();
@@ -61,6 +65,8 @@ class TasksController extends Controller
             BackupManager::dumpDatabase('myregister');
             return redirect()->route('tasks.index');
 
+        } catch (NoResultException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return redirect()->back()->with('error', 'There was an error while storing your task.');
@@ -78,11 +84,16 @@ class TasksController extends Controller
         try {
             $user_id = request()->user()->id;
             $task = Task::where('user_id', $user_id)->where('id',$id)->first();
+            if($task == null){
+                throw new NoResultException("Task not found", 1);
+            }
             return view('task.show', [
                 'title' => 'Details',
                 'subtitle' => "about your item",
                 'task' => $task
             ]);
+        } catch (NoResultException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return redirect()->back()->with('error','There was an error in your task.');
@@ -101,19 +112,19 @@ class TasksController extends Controller
             $user_id = request()->user()->id;
             $task = Task::where('user_id', $user_id)->where('id',$id)->first();
             if($task == null){
-                return redirect()->route('tasks.index');
+                throw new NoResultException("Task not found", 1);
             }
             $situations = Situation::where('user_id', $user_id)->get();
-
             $projects = Project::where([
                 'user_id' => $user_id
             ])->get();
-            
             return view('task.edit', [
                 'task' => $task,
                 'situations' => $situations,
                 'projects' => $projects
             ]);
+        } catch (NoResultException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return redirect()->back()->with('error', 'There was an error in your task.');
@@ -137,7 +148,9 @@ class TasksController extends Controller
             
             $user_id = request()->user()->id;
             $task = Task::where('user_id', $user_id)->where('id', $id)->first();
-
+            if($task == null){
+                throw new NoResultException("Task not found", 1);
+            }
             // if(isset($data['situationInput'])){
             //     $situation = new Situation();
             //     $situation->situation = $data['situationInput'];
@@ -157,6 +170,9 @@ class TasksController extends Controller
                     'user_id' => $user_id,
                     'id' => $data['project']
                 ])->first();
+                if($project == null){
+                    throw new NoResultException("Project not found", 1);
+                }
                 $task->project_id = $project->id;
             }
 
@@ -174,8 +190,10 @@ class TasksController extends Controller
             BackupManager::dumpDatabase('myregister');
             return redirect()->route('tasks.index');
 
+        } catch (NoResultException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
-            Log::error($e->getMessage());            
+            Log::error($e->getMessage());
             return redirect()->back()->with('error','There was an error while updating your task.');
         }
     }
@@ -191,9 +209,14 @@ class TasksController extends Controller
         try {
             $user_id = request()->user()->id;
             $task = Task::where('user_id', $user_id)->where('id',$id)->first();
+            if($task == null){
+                throw new NoResultException("Task not found", 1);
+            }
             Task::destroy($task->id);
             BackupManager::dumpDatabase('myregister');
             return redirect()->back();
+        } catch (NoResultException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return redirect()->back()->with('error','There was an error while deleting your task.');
@@ -375,7 +398,7 @@ class TasksController extends Controller
                 'user_id' => $user_id
             ])->first();
             if($task == null){
-                return redirect()->back();
+                throw new NoResultException("Task not found", 1);
             }
             $project = new Project();
             $project->name = $task->name;
@@ -385,6 +408,8 @@ class TasksController extends Controller
             $project->save();
             $task->delete();
             return redirect()->back();
+        } catch (NoResultException $e) {
+            return redirect()->back()->with('error',$e->getMessage());
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return redirect()->back()->with('error','There was an error while converting this task to project.');
@@ -399,11 +424,13 @@ class TasksController extends Controller
                 'user_id' => $user_id
             ])->first();
             if($task == null){
-                return redirect()->back()->with('error','This task doesnt exist.');
+                throw new NoResultException("Task not found", 1);
             }
             $task->completed = true;
             $task->save();
             return redirect()->route('tasks.index');
+        } catch (NoResultException $e) {
+            return redirect()->back()->with('error',$e->getMessage());
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return redirect()->back()->with('error','There was an error while trying to complete this task.');
