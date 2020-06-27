@@ -26,7 +26,7 @@
 </style>
 <div class="registerContainer backgroundcolor">
     <form method="POST" action="{{ route('register') }}">
-        ESTA PAGE NÃO POSSUI TOKEN, NÃO É POSSÍVEL SE REGISTRAR.
+        ESTA PAGE NÃO POSSUI TOKEN, NÃO É POSSÍVEL SE REGISTRAR..
 
         {{-- linha 1 --}}
         <div class="form-group row">
