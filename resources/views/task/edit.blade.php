@@ -33,7 +33,7 @@
         <div class="row">
             <div class="col">
                 <label for="description">Description</label>
-                <textarea rows="1" class="form-control" type="text" name="description">{{ $task->description }}</textarea>
+                <textarea rows="6" class="form-control" type="text" name="description">{{ $task->description }}</textarea>
             </div>
         </div>
 
