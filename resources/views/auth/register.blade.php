@@ -27,6 +27,7 @@
 <div class="registerContainer backgroundcolor">
     <form method="POST" action="{{ route('register') }}">
         @csrf
+        <input type="hidden" name="invitationToken" value="{{$invitation_token}}">
 
         {{-- linha 1 --}}
         <div class="form-group row">
@@ -88,6 +89,16 @@
                 <a class="btn btn-border form-control" href="{{ route('login') }}">Back to login</a>
             </div>
         </div>
+
+        @if (session('error'))
+            <div class="row">
+                <div class="col">
+                    <div class="alert alert-danger">
+                        {{session('error')}}
+                    </div>
+                </div>
+            </div>
+        @endif
 
     </form>
 </div>
