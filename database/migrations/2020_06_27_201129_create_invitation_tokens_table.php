@@ -16,10 +16,11 @@ class CreateInvitationTokensTable extends Migration
         Schema::create('invitation_tokens', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('invitation_token');
-            $table->string('email');
+            $table->string('email')->nullable();
+            $table->boolean('active')->default(true);
             $table->timestamps();
 
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
         });
     }
