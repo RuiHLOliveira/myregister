@@ -42,3 +42,6 @@ Route::put('/projects/{id}', 'ProjectsController@update')->middleware('auth')->n
 Route::delete('/projects/{id}', 'ProjectsController@destroy')->middleware('auth')->name('projects.destroy');
 
 Route::get('/project/completeProject/{id}', 'ProjectsController@completeProject')->middleware('auth')->name('projects.completeProject');
+
+
+Route::resource('invitations', 'InvitationTokenController')->middleware('auth');

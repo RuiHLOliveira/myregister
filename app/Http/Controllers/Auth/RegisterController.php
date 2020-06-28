@@ -87,7 +87,8 @@ class RegisterController extends Controller
             throw new AuthorizationException("Invitation token not sent.", 1);
         }
         $fields = [
-            'invitation_token' => $data['invitationToken']
+            'invitation_token' => $data['invitationToken'],
+            'active' => true
         ];
         $invitationToken = InvitationToken::where($fields)->first();
         if($invitationToken == null) {
@@ -115,12 +116,24 @@ class RegisterController extends Controller
             event(new Registered($user = $this->create($request->all())));
 
             $this->guard()->login($user);
-
+            $this->invalidateInvitationToken();
             return $this->registered($request, $user)
                             ?: redirect($this->redirectPath());
                         
         } catch (AuthorizationException $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
+    }
+
+    protected function invalidateInvitationToken()
+    {
+        $data = request()->all();
+        $fields = [
+            'invitation_token' => $data['invitationToken'],
+            'active' => true
+        ];
+        $invitationToken = InvitationToken::where($fields)->first();
+        $invitationToken->active = false;
+        $invitationToken->save();
     }
 }

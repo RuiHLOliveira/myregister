@@ -98,6 +98,10 @@
                 <li>
                     <a class="" href="{{ route('tasks.somedaymaybe') }}">Someday / Maybe</a>
                 </li>
+
+                <li>
+                    <a class="" href="{{ route('invitations.index') }}">Invitations</a>
+                </li>
                 
             @endguest
             
