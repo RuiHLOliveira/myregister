@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Artisan;
 class BackupManager extends Model
 {
    public static function dumpDatabase ($database) {
-        Artisan::call("backup",[
-            'database' => $database
-        ]);
+        // Artisan::call("backup",[
+        //     'database' => $database
+        // ]);
    }
 }
