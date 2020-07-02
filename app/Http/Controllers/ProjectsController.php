@@ -23,12 +23,12 @@ class ProjectsController extends Controller
             $user_id = request()->user()->id;
             $projects = Project::where([
                 'user_id' => $user_id
-            ])->get();
+            ])->orderBy('created_at','desc')->get();
             foreach ($projects as $key => $project) {
                 $projects[$key]['tasks'] = Task::where([
                     'user_id' => $user_id,
                     'project_id' => $project->id
-                ])->get();
+                ])->orderBy('created_at','asc')->get();
             }
             return view('projects.index', [
                 'title' => 'Projects',

@@ -117,7 +117,7 @@ class TasksController extends Controller
             $situations = Situation::where('user_id', $user_id)->get();
             $projects = Project::where([
                 'user_id' => $user_id
-            ])->get();
+            ])->orderBy('created_at','desc')->get();
             return view('task.edit', [
                 'task' => $task,
                 'situations' => $situations,
@@ -233,7 +233,7 @@ class TasksController extends Controller
     {
         try {
             $user_id = request()->user()->id;
-            $tasks = Task::where('user_id',$user_id)->whereNull('situation_id')->get();
+            $tasks = Task::where('user_id',$user_id)->whereNull('situation_id')->orderBy('created_at','desc')->get();
             return view('task.index', [
                 'title' => 'Inbox',
                 'subtitle' => "put your stuff here",
@@ -257,7 +257,7 @@ class TasksController extends Controller
             $tasks = Task::where([
                 'user_id' => $user_id,
                 'situation_id' => 1
-            ])->get();
+            ])->orderBy('duedate','asc')->get();
 
             return view('task.index', [
                 'title' => 'Tickler',
@@ -306,7 +306,7 @@ class TasksController extends Controller
             $tasks = Task::where([
                 'user_id' => $user_id,
                 'situation_id' => 3
-            ])->get();
+            ])->orderBy('created_at','desc')->get();
             return view('task.index', [
                 'title' => 'Recurring',
                 'subtitle' => "tasks you do everyday",
@@ -330,7 +330,7 @@ class TasksController extends Controller
             $tasks = Task::where([
                 'user_id' => $user_id,
                 'situation_id' => 4
-            ])->get();
+            ])->orderBy('created_at','desc')->get();
             return view('task.index', [
                 'title' => 'Next',
                 'subtitle' => "next actions you need to do",
@@ -354,7 +354,7 @@ class TasksController extends Controller
             $tasks = Task::where([
                 'user_id' => $user_id,
                 'situation_id' => 5
-            ])->get();
+            ])->orderBy('created_at','desc')->get();
             return view('task.index', [
                 'title' => 'Reading List',
                 'subtitle' => "articles, videos and stuff you want to read/watch",
@@ -378,7 +378,7 @@ class TasksController extends Controller
             $tasks = Task::where([
                 'user_id' => $user_id,
                 'situation_id' => 6
-            ])->get();
+            ])->orderBy('created_at','desc')->get();
             return view('task.index', [
                 'title' => 'Someday/Maybe',
                 'subtitle' => "things you want to do someday, but not week... or this month... or this year",
@@ -407,7 +407,7 @@ class TasksController extends Controller
             $project->user_id = $user_id;
             $project->save();
             $task->delete();
-            return redirect()->back();
+            return redirect()->route('projects.index');
         } catch (NoResultException $e) {
             return redirect()->back()->with('error',$e->getMessage());
         } catch (\Exception $e) {
