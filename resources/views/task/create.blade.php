@@ -10,7 +10,7 @@
         <div class="row">
             <div class="col">
                 <label for="name">Name</label>
-                <input class="form-control" type="text" name="name" required>
+                <input autofocus class="form-control" type="text" name="name" required>
             </div>
         </div>
 
