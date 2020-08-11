@@ -90,15 +90,18 @@ label {
     white-space: pre-wrap;
 }
 
-.cardModel{
-    background-color: #71bbff4d;
+.taskCardModel{
+    background-color: #99ceff3a;
     padding: 10px 20px;
+    box-shadow: 0 2px 5px 0px #00000033
 }
 
-.taskCardModel{
-    background-color: #77faa960;
+.cardModel{
+    background-color: #faffb825;
     padding: 10px 20px;
+    box-shadow: 0 2px 5px 0px #00000033
 }
+
 
 @media (max-width: 767.98px) {
     .btn-responsive {
