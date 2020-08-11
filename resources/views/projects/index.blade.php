@@ -31,9 +31,16 @@
             <div class="col">
                 <div class="cardModel">
                 
-                    <label for="" class="taskProjectFont">Project</label>
-                    <div class="mb-3 font-italic">{{ $project->name }}</div>
+                    {{-- PROJECT NAME --}}
+                    <div class="font15em font-weight-light">
+                        {{ $project->name }}
+                    </div>
 
+                    {{-- DESCRIPTION --}}
+                    <label for="" class="taskProjectFont">Description</label>
+                    <div class="mb-3 font-italic whiteSpacePreWrap">{{ $project->description }}</div>
+
+                    {{-- BADGES COMPLETED AND DUE DATE --}}
                     <div class="mb-3 font-italic">
                         <label for="" class="taskProjectFont">Tasks</label>
                         @foreach ( $project->tasks as $task)
