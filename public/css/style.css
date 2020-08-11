@@ -91,7 +91,12 @@ label {
 }
 
 .cardModel{
-    background-color: #7eabd422;
+    background-color: #71bbff4d;
+    padding: 10px 20px;
+}
+
+.taskCardModel{
+    background-color: #77faa960;
     padding: 10px 20px;
 }
 

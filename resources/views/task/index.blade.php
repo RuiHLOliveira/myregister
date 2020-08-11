@@ -29,7 +29,7 @@
     @forelse ($tasks as $task)
         <div class="row" style="margin-bottom: 20px;">
             <div class="col">
-                <div class="cardModel">
+                <div class="taskCardModel">
                     {{-- TASK NAME --}}
                     <div class="font15em font-weight-light">
                         {{ $task->name }}
